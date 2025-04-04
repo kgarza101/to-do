@@ -1,7 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 from datetime import datetime
-
 import reflex as rx
+from auth_state import AuthState
 
 
 # Define the Task model
@@ -229,16 +229,72 @@ def navbar():
         padding_top="2em",
     )
 
-
-def index():
-    return rx.vstack(
-        navbar(),
-        add_task_form(),
-        task_table(),
-        width="100%",
-        spacing="6",
-        padding_x=["1.5em", "1.5em", "3em"],
+# Login page, you can customize the layout of buttons, color, and background
+def login_page():
+     return rx.center(
+         rx.vstack(
+             rx.heading("Login", size = "4"),
+             rx.form(
+                 rx.vstack(
+                     rx.input(
+                         placeholder = "Username",
+                         on_blur = AuthState.set_username,
+                         width = "100%",
+                     ),
+                     rx.input(
+                         type = "password",
+                         placeholder = "Password",
+                         on_blur = AuthState.set_password,
+                         width = "100%",
+                     ),
+                     rx.button("Login", type_ = "submit", width = "100%"),
+                     spacing = "3",
+                 ),
+                 on_submit = AuthState.login,
+                 width = "100%",
+             ),
+             rx.cond(
+                 AuthState.login_error,
+                 rx.text(AuthState.login_error, color = "red"),  
+             ),
+             width = ["90%", "80%", "60%", "40%"], 
+             bg = "white",
+             p = "8",
+             border_radius = "lg",
+             box_shadow = "lg",   
+         ),
+         width = "100vw",
+         height = "100vh",
+         background = "radial-gradient(circle at 22% 11%, rgba(62, 180, 137, .20), hsla (0, 0%, 100%, 0) 19%)",
+         )   
+     
+def todo_page():
+    return rx.cond(
+        AuthState.is_authenticated,
+        rx.vstack(
+            navbar(),
+            add_task_form(),
+            task_table(),
+            width = "100%",
+            spacing = "6",
+            padding_x = ["1.5em", "1.5em", "3em"],
+            ),
+        rx.script("window.location.href = '/'")
     )
+    
+    
+
+
+#def index():
+#    return rx.vstack(
+#        navbar(),
+#        add_task_form(),
+#        task_table(),
+#        width="100%",
+#        spacing="6",
+#        padding_x=["1.5em", "1.5em", "3em"],
+#    )
+
 
 # Create the app and add the page
 app = rx.App(
@@ -247,4 +303,5 @@ app = rx.App(
     ),
 )
 
-app.add_page(index)
+app.add_page(login_page, route = "/")
+app.add_page(todo_page, route = "/todo")
