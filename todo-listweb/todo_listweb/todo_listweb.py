@@ -282,19 +282,6 @@ def todo_page():
         rx.script("window.location.href = '/'")
     )
     
-    
-
-
-#def index():
-#    return rx.vstack(
-#        navbar(),
-#        add_task_form(),
-#        task_table(),
-#        width="100%",
-#        spacing="6",
-#        padding_x=["1.5em", "1.5em", "3em"],
-#    )
-
 
 # Create the app and add the page
 app = rx.App(
